@@ -1,0 +1,791 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 容器样式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 搜索区域样式 */
+.search-section {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* 搜索引擎切换 */
+.search-engine-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.engine-btn {
+    padding: 8px 16px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.engine-btn:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.engine-btn.active {
+    background-color: #4285f4;
+    color: white;
+    border-color: #4285f4;
+}
+
+/* 搜索框容器 */
+.search-container {
+    position: relative;
+    width: 85%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#search-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 60px 0 20px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#search-input:focus {
+    border-color: #4285f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 搜索按钮 */
+.search-btn {
+    position: absolute;
+    right: 112px;
+    top: 0;
+    height: 48px;
+    width: 56px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-left: none;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.search-btn:hover {
+    background-color: #f0f0f0;
+    color: #4285f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 语音输入按钮和设置按钮 */
+.voice-btn, .settings-btn {
+    position: absolute;
+    top: 0;
+    height: 48px;
+    width: 56px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-left: none;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.voice-btn {
+    right: 56px; /* 为设置按钮留出空间 */
+}
+
+.settings-btn {
+    right: 0;
+}
+
+.voice-btn:hover, .settings-btn:hover {
+    background-color: #f0f0f0;
+    color: #4285f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.voice-btn.recording {
+    background-color: #ea4335;
+    color: white;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 2px 4px rgba(234, 67, 53, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(234, 67, 53, 0.8);
+    }
+    100% {
+        box-shadow: 0 2px 4px rgba(234, 67, 53, 0.4);
+    }
+}
+
+/* 搜索建议和历史记录 */
+.search-suggestions {
+    position: absolute;
+    width: 85%;
+    max-width: 800px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    text-align: left;
+}
+
+.search-suggestions.hidden {
+    display: none;
+}
+
+.suggestion-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestion-item .delete-btn {
+    color: #999;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.suggestion-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.suggestion-item .delete-btn:hover {
+    color: #ea4335;
+}
+
+/* 直达卡片区域样式 */
+.shortcuts-section {
+    margin-bottom: 40px;
+}
+
+.shortcuts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.shortcuts-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.add-btn {
+    padding: 8px 16px;
+    background-color: #4285f4;
+    color: white;
+    border: 1px solid #4285f4;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.add-btn:hover {
+    background-color: #3367d6;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 直达卡片网格 */
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+}
+
+/* 直达卡片样式 */
+.shortcut-card {
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    user-select: none;
+}
+
+.shortcut-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.shortcut-card:active {
+    background-color: #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+
+
+.shortcut-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 10px;
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.shortcut-name {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 删除按钮 */
+.shortcut-delete {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #ea4335;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.shortcut-card:hover .shortcut-delete,
+.folder-card:hover .shortcut-delete {
+    opacity: 1;
+}
+
+.shortcut-delete:hover {
+    background-color: #d33222;
+}
+
+/* 弹窗样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+/* 消息确认弹窗（用于删除确认等） */
+#message-modal {
+    z-index: 3000;
+}
+
+/* 文件夹内容弹窗 */
+#folder-content-modal {
+    z-index: 2000;
+}
+
+/* 添加/编辑弹窗和文件夹名称弹窗 */
+#shortcut-modal,
+#folder-modal {
+    z-index: 2000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    background-color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #4285f4;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 复选框样式 */
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* 下拉选择框样式 */
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    background-color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.form-group select:focus {
+    border-color: #4285f4;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 消息内容样式 */
+.message-content {
+    margin-bottom: 20px;
+    padding: 15px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 图标上传区域 */
+.icon-upload {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon-preview {
+    width: 48px;
+    height: 48px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.icon-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#shortcut-icon {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+}
+
+.favicon-btn {
+    padding: 10px 16px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    outline: none;
+}
+
+.favicon-btn:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 表单操作按钮 */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.submit-btn {
+    padding: 10px 20px;
+    background-color: #4285f4;
+    color: white;
+    border: 1px solid #4285f4;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.submit-btn:hover {
+    background-color: #3367d6;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.cancel-btn {
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.cancel-btn:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 文件夹卡片样式 */
+.folder-card {
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    user-select: none;
+}
+
+.folder-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.folder-card:active {
+    background-color: #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+/* 拖拽样式 */
+.dragging {
+    opacity: 0.5;
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.drag-over {
+    background-color: #e8f0fe;
+    border: 2px dashed #4285f4;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+    transform: translateY(-2px) rotate(5deg);
+    transition: all 0.3s ease;
+}
+
+/* SortableJS拖拽排序相关样式 */
+.sortable-ghost {
+    background-color: rgba(33, 150, 243, 0.1);
+    opacity: 0.6;
+    border: 2px dashed #2196f3;
+}
+
+.sortable-chosen {
+    background-color: rgba(33, 150, 243, 0.2);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.sortable-drag {
+    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+/* 优化拖拽时的鼠标样式 */
+.sortable-handle {
+    cursor: grab;
+}
+
+.sortable-handle:active {
+    cursor: grabbing;
+}
+
+/* 确保网格布局在拖拽时保持稳定 */
+.folders-grid,
+.websites-grid,
+.folder-content-grid {
+    min-height: 100px; /* 确保在没有内容时也可以拖放 */
+}
+
+.folder-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    color: #fbbc05;
+}
+
+.folder-card-name {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 文件夹内容弹窗样式 */
+.folder-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.folder-content-grid .shortcut-card {
+    width: 100%;
+    height: 120px;
+}
+
+.empty-folder {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 14px;
+    background-color: #fafafa;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .search-container {
+        width: 95%;
+    }
+    
+    .search-suggestions {
+        width: 95%;
+    }
+    
+    .shortcuts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+    }
+    
+    .folder-content-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+    }
+    
+    .shortcut-card,
+    .folder-card {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .shortcut-icon,
+    .folder-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .folder-icon {
+        font-size: 24px;
+    }
+    
+    .shortcut-name,
+    .folder-card-name {
+        font-size: 12px;
+    }
+    
+    .search-engine-switcher {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .engine-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .shortcuts-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+    
+    .shortcut-card,
+    .folder-card {
+        width: 100%;
+        height: 80px;
+    }
+    
+    .shortcut-icon,
+    .folder-icon {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .folder-icon {
+        font-size: 20px;
+    }
+    
+    .shortcut-name,
+    .folder-card-name {
+        font-size: 11px;
+    }
+}

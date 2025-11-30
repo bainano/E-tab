@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E tab</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入本地SortableJS库 -->
+    <script src="Sortable.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 搜索区域 -->
+        <div class="search-section">
+            <!-- 搜索引擎切换 -->
+            <div class="search-engine-switcher">
+                <button class="engine-btn active" data-engine="default">Bing</button>
+                <button class="engine-btn" data-engine="baidu">百度</button>
+                <button class="engine-btn" data-engine="sogou">搜狗</button>
+                <button class="engine-btn" data-engine="zhihu">知乎</button>
+                <button class="engine-btn" data-engine="bilibili">B站</button>
+                <button class="engine-btn" data-engine="douyin">抖音</button>
+                <button class="engine-btn" data-engine="weibo">微博</button>
+                <button class="engine-btn" data-engine="quark">夸克</button>
+            </div>
+            
+            <!-- 搜索框容器 -->
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="搜索..." autocomplete="off">
+                <button id="search-btn" class="search-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button id="voice-btn" class="voice-btn">
+                    <img src="assets/microphone.svg" alt="语音搜索" width="24" height="24">
+                </button>
+                <button id="settings-btn" class="settings-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 搜索建议和历史记录 -->
+            <div id="search-suggestions" class="search-suggestions hidden">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 直达卡片区域 -->
+        <div class="shortcuts-section">
+            <div class="shortcuts-header">
+                <h2>快捷卡片</h2>
+                <div class="header-actions">
+                    <button id="add-folder-btn" class="add-btn">新建文件夹</button>
+                    <button id="add-shortcut-btn" class="add-btn">添加网站</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 文件夹区域 -->
+        <div class="shortcuts-section">
+            <h3 class="section-title">文件夹</h3>
+            <div id="folders-grid" class="shortcuts-grid">
+                <!-- 动态生成文件夹卡片 -->
+            </div>
+        </div>
+        
+        <!-- 网站直达区域 -->
+        <div class="shortcuts-section">
+            <h3 class="section-title">网站直达</h3>
+            <div id="websites-grid" class="shortcuts-grid">
+                <!-- 动态生成网站直达卡片 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加/编辑直达卡片弹窗 -->
+    <div id="shortcut-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">添加直达网站</h3>
+                <button id="close-modal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="shortcut-form">
+                    <div class="form-group">
+                        <label for="shortcut-name">网站名称</label>
+                        <input type="text" id="shortcut-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-url">网站URL</label>
+                        <input type="url" id="shortcut-url" name="url" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-icon">网站图标</label>
+                        <div class="icon-upload">
+                            <div id="icon-preview" class="icon-preview">
+                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="48" height="48" fill="#f0f0f0"/>
+                                    <text x="24" y="30" font-size="24" text-anchor="middle" fill="#999">+</text>
+                                </svg>
+                            </div>
+                            <input type="file" id="shortcut-icon" name="icon" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/svg+xml,image/x-icon">
+                            <button type="button" id="get-favicon-btn" class="favicon-btn">自动获取图标</button>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">保存</button>
+                        <button type="button" id="cancel-modal" class="cancel-btn">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 自定义消息弹窗 -->
+    <div id="message-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="message-modal-title">提示</h3>
+                <button id="close-message-modal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="message-content" class="message-content"></div>
+                <div class="form-actions">
+                    <button id="message-ok-btn" class="submit-btn">确定</button>
+                    <button id="message-cancel-btn" class="cancel-btn">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 文件夹名称输入弹窗 -->
+    <div id="folder-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="folder-modal-title">新建文件夹</h3>
+                <button id="close-folder-modal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="folder-form">
+                    <div class="form-group">
+                        <label for="folder-name">文件夹名称</label>
+                        <input type="text" id="folder-name" name="name" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">确定</button>
+                        <button type="button" id="cancel-folder-modal" class="cancel-btn">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 文件夹内容弹窗 -->
+    <div id="folder-content-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="folder-content-modal-title">文件夹内容</h3>
+                <button id="close-folder-content-modal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="folder-content" class="folder-content">
+                    <!-- 动态生成文件夹内容 -->
+                </div>
+                <div class="form-actions">
+                    <button id="close-folder-content" class="submit-btn">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 设置弹窗 -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="settings-modal-title">设置</h3>
+                <button id="close-settings-modal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label for="search-engine">默认搜索引擎</label>
+                        <select id="search-engine" name="search-engine">
+                            <option value="default">Bing</option>
+                            <option value="baidu">百度</option>
+                            <option value="sogou">搜狗</option>
+                            <option value="zhihu">知乎</option>
+                            <option value="bilibili">哔哩哔哩</option>
+                            <option value="douyin">抖音</option>
+                            <option value="weibo">微博</option>
+                            <option value="quark">夸克</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="voice-continuous">连续语音识别</label>
+                        <input type="checkbox" id="voice-continuous" name="voice-continuous">
+                        <span class="checkbox-label">允许连续识别多句话</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="voice-keyword">语音搜索关键词</label>
+                        <input type="text" id="voice-keyword" name="voice-keyword" placeholder="如：搜索、查找">
+                    </div>
+                    <div class="form-group">
+                        <label for="open-in-new-tab">在新标签页中打开搜索结果</label>
+                        <input type="checkbox" id="open-in-new-tab" name="open-in-new-tab">
+                        <span class="checkbox-label">搜索结果将在新标签页中打开</span>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">保存</button>
+                        <button type="button" id="cancel-settings-modal" class="cancel-btn">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
