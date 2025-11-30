@@ -1481,100 +1481,199 @@ function handleIconUpload(e) {
 
 // 自动获取网站图标
 function handleGetFavicon() {
-    const url = elements.shortcutUrl.value;
-    if (!url) return;
+    const url = elements.shortcutUrl.value.trim(); // 添加trim()去除空格
+    
+    if (!url) {
+        showMessageModal('请输入网站地址', '提示');
+        return;
+    }
     
     try {
-        const urlObj = new URL(url);
-        const faviconUrl = `${urlObj.protocol}//${urlObj.host}/favicon.ico`;
+        // 如果URL不包含协议，添加默认的https://
+        let fullUrl = url;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            fullUrl = 'https://' + url;
+        }
         
-        // 验证图标是否存在
-        const img = new Image();
-        img.onload = () => {
-            // 处理图标，确保正确显示
-            processIconForPreview(faviconUrl);
-        };
-        img.onerror = () => {
-            // 如果默认favicon不存在，尝试获取其他常见格式的图标
-            const alternativeIcons = [
-                `${urlObj.protocol}//${urlObj.host}/favicon.png`,
-                `${urlObj.protocol}//${urlObj.host}/apple-touch-icon.png`,
-                `${urlObj.protocol}//${urlObj.host}/apple-touch-icon-precomposed.png`
-            ];
+        const urlObj = new URL(fullUrl);
+        const domain = urlObj.host;
+        
+        // 尝试多种图标路径
+        const iconUrls = [
+            `${urlObj.protocol}//${domain}/favicon.ico`,
+            `${urlObj.protocol}//${domain}/favicon.png`,
+            `${urlObj.protocol}//${domain}/apple-touch-icon.png`,
+            `${urlObj.protocol}//${domain}/apple-touch-icon-precomposed.png`
+        ];
+        
+        // 逐个尝试获取图标
+        tryNextIcon(0);
+        
+        function tryNextIcon(index) {
+            if (index >= iconUrls.length) {
+                // 所有尝试都失败了，显示默认图标
+                showDefaultIcon();
+                showMessageModal('图标获取失败，将使用默认图标', '提示');
+                return;
+            }
             
-            let currentIndex = 0;
-            const tryNextIcon = () => {
-                if (currentIndex >= alternativeIcons.length) {
-                    // 所有尝试都失败，使用通用图标或保持原样
-                    // 不使用百度图标作为默认值
-                    elements.iconPreview.innerHTML = `
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="48" height="48" fill="#f0f0f0"/>
-                            <text x="24" y="30" font-size="24" text-anchor="middle" fill="#999">+</text>
-                        </svg>
-                    `;
-                    return;
-                }
-                
-                const altIconUrl = alternativeIcons[currentIndex];
-                const altImg = new Image();
-                altImg.onload = () => {
-                    processIconForPreview(altIconUrl);
-                };
-                altImg.onerror = () => {
-                    currentIndex++;
-                    tryNextIcon();
-                };
-                altImg.src = altIconUrl;
-            };
+            const iconUrl = iconUrls[index];
             
-            tryNextIcon();
-        };
-        img.src = faviconUrl;
+            // 对于扩展程序，我们不能直接通过XMLHttpRequest获取跨域资源
+            // 直接使用processIconForPreview处理图标，让它自己处理CORS问题
+            processIconForPreview(iconUrl, true); // 第二个参数表示这是自动获取的图标
+        }
+        
+        // 暴露tryNextIcon到全局作用域，以便在图片加载失败时调用
+        window.tryNextFavicon = tryNextIcon;
     } catch (error) {
-        console.error('无效的URL:', error);
+        // 显示错误信息给用户
+        showMessageModal('请输入有效的网站地址，例如：www.example.com 或 https://www.example.com', 'URL格式错误');
     }
 }
 
+// 显示默认图标
+function showDefaultIcon() {
+    elements.iconPreview.innerHTML = `
+        <img src="/favicon.ico" alt="默认图标" style="width: 100%; height: 100%;" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgZmlsbD0iI2YwZjBmMCIvPgogICAgPHRleHQgeD0iMjQiIHk9IjMwIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij4rPC90ZXh0Pgo8L3N2Zz4=';" draggable="false">
+    `;
+}
+
 // 处理图标，确保正确显示（特别是大尺寸ICO图标）
-function processIconForPreview(iconUrl) {
+// addAutoFetch参数表示是否是自动获取的图标
+function processIconForPreview(iconUrl, isAutoFetch = false) {
+    
+    // 如果是自动获取的图标，直接显示而不通过Canvas处理（避免CORS问题）
+    if (isAutoFetch) {
+        // 直接显示图标，不进行Canvas处理
+        const imgElement = document.createElement('img');
+        imgElement.src = iconUrl;
+        imgElement.alt = "预览";
+        imgElement.style.width = "100%";
+        imgElement.style.height = "100%";
+        imgElement.draggable = false;
+        
+        // 使用addEventListener替代内联onerror处理器
+        imgElement.onerror = () => {
+            handleFaviconError(iconUrl);
+        };
+        
+        // 清空预览区域并添加图片
+        elements.iconPreview.innerHTML = '';
+        elements.iconPreview.appendChild(imgElement);
+        return;
+    }
+    
     const img = new Image();
     // 允许跨域请求
     img.crossOrigin = 'anonymous';
     
     img.onload = () => {
-        // 创建Canvas用于处理图标
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // 设置Canvas大小为合适的尺寸（48x48像素，与预览区域匹配）
-        const targetSize = 48;
-        canvas.width = targetSize;
-        canvas.height = targetSize;
-        
-        // 绘制并缩放图标
-        ctx.clearRect(0, 0, targetSize, targetSize);
-        ctx.drawImage(img, 0, 0, targetSize, targetSize);
-        
-        // 将Canvas转换为DataURL
-        const processedIconUrl = canvas.toDataURL('image/png');
-        
-        // 更新预览
-        elements.iconPreview.innerHTML = `<img src="${processedIconUrl}" alt="预览" style="width: 100%; height: 100%;" draggable="false">`;
+        try {
+            // 创建Canvas用于处理图标
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置Canvas大小为合适的尺寸（48x48像素，与预览区域匹配）
+            const targetSize = 48;
+            canvas.width = targetSize;
+            canvas.height = targetSize;
+            
+            // 绘制并缩放图标
+            ctx.clearRect(0, 0, targetSize, targetSize);
+            ctx.drawImage(img, 0, 0, targetSize, targetSize);
+            
+            // 将Canvas转换为DataURL
+            const processedIconUrl = canvas.toDataURL('image/png');
+            
+            // 更新预览
+            const previewImg = document.createElement('img');
+            previewImg.src = processedIconUrl;
+            previewImg.alt = "预览";
+            previewImg.style.width = "100%";
+            previewImg.style.height = "100%";
+            previewImg.draggable = false;
+            
+            elements.iconPreview.innerHTML = '';
+            elements.iconPreview.appendChild(previewImg);
+        } catch (canvasError) {
+            // 如果Canvas处理失败，直接使用原始图标
+            const previewImg = document.createElement('img');
+            previewImg.src = iconUrl;
+            previewImg.alt = "预览";
+            previewImg.style.width = "100%";
+            previewImg.style.height = "100%";
+            previewImg.draggable = false;
+            
+            // 使用addEventListener替代内联onerror处理器
+            previewImg.onerror = () => {
+                // 显示默认图标
+                showDefaultIcon();
+            };
+            
+            elements.iconPreview.innerHTML = '';
+            elements.iconPreview.appendChild(previewImg);
+        }
     };
     
     img.onerror = () => {
-        console.error('处理图标失败:', iconUrl);
+        // 如果是自动获取且有下一个图标可尝试，则尝试下一个
+        if (isAutoFetch && window.tryNextFavicon) {
+            // 查找当前URL在数组中的索引
+            const urlObj = new URL(iconUrl);
+            const domain = urlObj.host;
+            const iconUrls = [
+                `https://${domain}/favicon.ico`,
+                `https://${domain}/favicon.png`,
+                `https://${domain}/apple-touch-icon.png`,
+                `https://${domain}/apple-touch-icon-precomposed.png`
+            ];
+            
+            const currentIndex = iconUrls.indexOf(iconUrl);
+            if (currentIndex >= 0 && currentIndex < iconUrls.length - 1) {
+                window.tryNextFavicon(currentIndex + 1);
+                return;
+            }
+        }
+        
         // 使用通用图标，不使用百度图标
-        elements.iconPreview.innerHTML = `
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="48" height="48" fill="#f0f0f0"/>
-                <text x="24" y="30" font-size="24" text-anchor="middle" fill="#999">+</text>
-            </svg>
-        `;
+        showDefaultIcon();
     };
     
-    img.src = iconUrl;
+    // 只有在非自动获取的情况下才设置img.src触发加载
+    if (!isAutoFetch) {
+        img.src = iconUrl;
+    }
+}
+
+// 处理favicon加载错误的全局函数
+function handleFaviconError(url) {
+    // 如果有下一个图标可尝试，则尝试下一个
+    if (window.tryNextFavicon) {
+        // 查找当前URL在数组中的索引
+        try {
+            const urlObj = new URL(url);
+            const domain = urlObj.host;
+            const iconUrls = [
+                `https://${domain}/favicon.ico`,
+                `https://${domain}/favicon.png`,
+                `https://${domain}/apple-touch-icon.png`,
+                `https://${domain}/apple-touch-icon-precomposed.png`
+            ];
+            
+            const currentIndex = iconUrls.indexOf(url);
+            if (currentIndex >= 0 && currentIndex < iconUrls.length - 1) {
+                window.tryNextFavicon(currentIndex + 1);
+                return;
+            }
+        } catch (e) {
+        }
+    }
+    
+    // 显示默认图标
+    showDefaultIcon();
+    // 显示图标获取失败提示
+    showMessageModal('图标获取失败', '提示');
 }
 
 
